@@ -49,7 +49,7 @@ For example, the following will compile without error or warning even though any
 human glancing at the code could figure out that it is invalid:
 
 ```csharp
-var numbers = new[] { 0.1, 0.2, 0.3, };
+var numbers = new object[] { 0.1, 0.2, 0.3, };
 foreach (int i in numbers)
 {
 	Console.WriteLine($"i={i}, 2*i={2*i}");
