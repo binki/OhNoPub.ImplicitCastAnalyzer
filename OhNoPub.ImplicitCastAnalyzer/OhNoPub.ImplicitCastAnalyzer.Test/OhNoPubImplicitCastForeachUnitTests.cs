@@ -9,7 +9,8 @@ namespace OhNoPub.ImplicitCastAnalyzer.Test
     [TestClass]
     public class UnitTest : CodeFixVerifier
     {
-        private const string DiagnosticMessage = "Implicit cast from '{0}' to '{1}'";
+        private const string DiagnosticMessage = "Implicit run time cast from '{0}' to '{1}'";
+        private const string OhNoPubImplicitCastForeachId = "OhNoPubImplicitCastForeach";
 
         // No diagnostics expected to show up
         [TestMethod]
@@ -191,7 +192,7 @@ class MyClass {
 }";
             var expected = new DiagnosticResult
             {
-                Id = "OhNoPubImplicitCastAnalyzer",
+                Id = OhNoPubImplicitCastForeachId,
                 Message = string.Format(DiagnosticMessage, "object", "int"),
                 Severity = DiagnosticSeverity.Warning,
                 Locations = new[] {
@@ -226,7 +227,7 @@ class MyClass {
 }";
             var expected = new DiagnosticResult
             {
-                Id = "OhNoPubImplicitCastAnalyzer",
+                Id = OhNoPubImplicitCastForeachId,
                 Message = string.Format(DiagnosticMessage, "object", "int"),
                 Severity = DiagnosticSeverity.Warning,
                 Locations =
@@ -264,7 +265,7 @@ class MyClass {
 }";
             var expected = new DiagnosticResult
             {
-                Id = "OhNoPubImplicitCastAnalyzer",
+                Id = OhNoPubImplicitCastForeachId,
                 Message = string.Format(DiagnosticMessage, "object", "int"),
                 Severity = DiagnosticSeverity.Warning,
                 Locations =
@@ -289,12 +290,12 @@ class MyClass {
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new OhNoPubImplicitCastAnalyzerCodeFixProvider();
+            return new OhNoPubImplicitCastForeachCodeFixProvider();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new OhNoPubImplicitCastAnalyzerAnalyzer();
+            return new OhNoPubImplicitCastForeachAnalyzer();
         }
     }
 }

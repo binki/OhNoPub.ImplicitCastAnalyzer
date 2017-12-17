@@ -122,10 +122,10 @@
     <comment>An optional longer localizable description of the diagnostic.</comment>
   </data>
   <data name="AnalyzerMessageFormat" xml:space="preserve">
-    <value>Implicit cast from '{0}' to '{1}'</value>
+    <value>Implicit run time cast from '{0}' to '{1}'</value>
     <comment>The format-able message the diagnostic displays.</comment>
   </data>
-  <data name="AnalyzerTitle" xml:space="preserve">
+  <data name="AnalyzerTitleForeach" xml:space="preserve">
     <value>Looping construct uses implicit runtime cast</value>
     <comment>The title of the diagnostic.</comment>
   </data>

@@ -71,7 +71,7 @@ namespace OhNoPub.ImplicitCastAnalyzer {
         }
         
         /// <summary>
-        ///   Looks up a localized string similar to Implicit cast from &apos;{0}&apos; to &apos;{1}&apos;.
+        ///   Looks up a localized string similar to Implicit run time cast from &apos;{0}&apos; to &apos;{1}&apos;.
         /// </summary>
         internal static string AnalyzerMessageFormat {
             get {
@@ -82,9 +82,9 @@ namespace OhNoPub.ImplicitCastAnalyzer {
         /// <summary>
         ///   Looks up a localized string similar to Looping construct uses implicit runtime cast.
         /// </summary>
-        internal static string AnalyzerTitle {
+        internal static string AnalyzerTitleForeach {
             get {
-                return ResourceManager.GetString("AnalyzerTitle", resourceCulture);
+                return ResourceManager.GetString("AnalyzerTitleForeach", resourceCulture);
             }
         }
     }

@@ -1,26 +1,22 @@
-using System;
-using System.Collections.Generic;
+using Microsoft.CodeAnalysis;
+using Microsoft.CodeAnalysis.CodeActions;
+using Microsoft.CodeAnalysis.CodeFixes;
+using Microsoft.CodeAnalysis.CSharp;
+using Microsoft.CodeAnalysis.CSharp.Syntax;
 using System.Collections.Immutable;
 using System.Composition;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
-using Microsoft.CodeAnalysis;
-using Microsoft.CodeAnalysis.CodeFixes;
-using Microsoft.CodeAnalysis.CodeActions;
-using Microsoft.CodeAnalysis.CSharp;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
-using Microsoft.CodeAnalysis.Rename;
-using Microsoft.CodeAnalysis.Text;
 
 namespace OhNoPub.ImplicitCastAnalyzer
 {
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(OhNoPubImplicitCastAnalyzerCodeFixProvider)), Shared]
-    public class OhNoPubImplicitCastAnalyzerCodeFixProvider : CodeFixProvider
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(OhNoPubImplicitCastForeachCodeFixProvider)), Shared]
+    public class OhNoPubImplicitCastForeachCodeFixProvider : CodeFixProvider
     {
         private const string title = "Avoid implicit cast with 'var'";
 
-        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(OhNoPubImplicitCastAnalyzerAnalyzer.DiagnosticId);
+        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(OhNoPubImplicitCastForeachAnalyzer.DiagnosticId);
 
         public sealed override FixAllProvider GetFixAllProvider()
         {
