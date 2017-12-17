@@ -41,7 +41,7 @@ the runtime types of values in the iterated collection and it is known that
 the API will never change. For example, this is considered acceptable by many
 for interacting with legacy untyped winforms APIs. But, this same feature has two issues.
 First, it results in an runtime cast with its performance pentalty which, with
-some planning/design/APi improvement, may be unnecessary. Second and, in my opinion,
+some planning/design/API improvement, may be unnecessary. Second and, in my opinion,
 most importantly, this defers detection of some types of programming errors until
 runtime.
 
