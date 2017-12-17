@@ -18,12 +18,9 @@ namespace OhNoPub.ImplicitCastAnalyzer
     [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(OhNoPubImplicitCastAnalyzerCodeFixProvider)), Shared]
     public class OhNoPubImplicitCastAnalyzerCodeFixProvider : CodeFixProvider
     {
-        private const string title = "Make uppercase";
+        private const string title = "Avoid implicit cast with 'var'";
 
-        public sealed override ImmutableArray<string> FixableDiagnosticIds
-        {
-            get { return ImmutableArray.Create(OhNoPubImplicitCastAnalyzerAnalyzer.DiagnosticId); }
-        }
+        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(OhNoPubImplicitCastAnalyzerAnalyzer.DiagnosticId);
 
         public sealed override FixAllProvider GetFixAllProvider()
         {
@@ -40,34 +37,32 @@ namespace OhNoPub.ImplicitCastAnalyzer
             var diagnosticSpan = diagnostic.Location.SourceSpan;
 
             // Find the type declaration identified by the diagnostic.
-            var declaration = root.FindToken(diagnosticSpan.Start).Parent.AncestorsAndSelf().OfType<TypeDeclarationSyntax>().First();
+            var declaration = (TypeSyntax)root.FindToken(diagnosticSpan.Start).Parent;
 
             // Register a code action that will invoke the fix.
             context.RegisterCodeFix(
                 CodeAction.Create(
                     title: title,
-                    createChangedSolution: c => MakeUppercaseAsync(context.Document, declaration, c), 
+                    createChangedDocument: ct => MakeUseVar(context.Document, declaration, ct), 
                     equivalenceKey: title),
                 diagnostic);
         }
 
-        private async Task<Solution> MakeUppercaseAsync(Document document, TypeDeclarationSyntax typeDecl, CancellationToken cancellationToken)
+        private async Task<Document> MakeUseVar(
+            Document document,
+            TypeSyntax type,
+            CancellationToken cancellationToken)
         {
-            // Compute new uppercase name.
-            var identifierToken = typeDecl.Identifier;
-            var newName = identifierToken.Text.ToUpperInvariant();
+            var newType = SyntaxFactory.IdentifierName(
+                SyntaxFactory.Identifier(
+                    type.GetLeadingTrivia(),
+                    "var",
+                    type.GetTrailingTrivia()));
 
-            // Get the symbol representing the type to be renamed.
-            var semanticModel = await document.GetSemanticModelAsync(cancellationToken);
-            var typeSymbol = semanticModel.GetDeclaredSymbol(typeDecl, cancellationToken);
+            var oldRoot = await document.GetSyntaxRootAsync(cancellationToken);
+            var newRoot = oldRoot.ReplaceNode(type, newType);
 
-            // Produce a new solution that has all references to that type renamed, including the declaration.
-            var originalSolution = document.Project.Solution;
-            var optionSet = originalSolution.Workspace.Options;
-            var newSolution = await Renamer.RenameSymbolAsync(document.Project.Solution, typeSymbol, newName, optionSet, cancellationToken).ConfigureAwait(false);
-
-            // Return the new solution with the now-uppercase type name.
-            return newSolution;
+            return document.WithSyntaxRoot(newRoot);
         }
     }
 }

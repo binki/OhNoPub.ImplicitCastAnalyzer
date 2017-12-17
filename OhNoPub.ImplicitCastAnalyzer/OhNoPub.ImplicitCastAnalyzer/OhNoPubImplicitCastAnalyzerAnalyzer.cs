@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.Immutable;
 using System.Linq;
@@ -30,21 +30,95 @@ namespace OhNoPub.ImplicitCastAnalyzer
         {
             // TODO: Consider registering other actions that act on syntax instead of or in addition to symbols
             // See https://github.com/dotnet/roslyn/blob/master/docs/analyzers/Analyzer%20Actions%20Semantics.md for more information
-            context.RegisterSymbolAction(AnalyzeSymbol, SymbolKind.NamedType);
+            context.RegisterSyntaxNodeAction(AnalyzeForEachSyntaxNode, SyntaxKind.ForEachStatement);
         }
 
-        private static void AnalyzeSymbol(SymbolAnalysisContext context)
+        private void AnalyzeForEachSyntaxNode(SyntaxNodeAnalysisContext context)
         {
-            // TODO: Replace the following code with your own analysis, generating Diagnostic objects for any issues you find
-            var namedTypeSymbol = (INamedTypeSymbol)context.Symbol;
+            var forEachStatement = (ForEachStatementSyntax)context.Node;
 
-            // Find just those named type symbols with names containing lowercase letters.
-            if (namedTypeSymbol.Name.ToCharArray().Any(char.IsLower))
+            if (forEachStatement.Type.IsVar)
             {
-                // For all such symbols, produce a diagnostic.
-                var diagnostic = Diagnostic.Create(Rule, namedTypeSymbol.Locations[0], namedTypeSymbol.Name);
+                // Fast path is var—we already know that will be compatible with the assignment.
+                return;
+            }
 
-                context.ReportDiagnostic(diagnostic);
+            var loopVariableTypeInfo = context.SemanticModel.GetTypeInfo(forEachStatement.Type);
+            if (loopVariableTypeInfo.Type == null
+                || loopVariableTypeInfo.Type.TypeKind == TypeKind.Error)
+            {
+                // Ignore untyped/error.
+                return;
+            }
+
+            // There is a special case. In Roslyn, foreach-ing over an array is treated
+            // in the syntax tree/semantics as IEnumerable instead of IEnumerable<ArrayType>.
+            // Thus, it ends up looking like an implicitly explicit cast when it might not
+            // be. So detect arrays first and handle them specially by checking the
+            // element type.
+            var expressionTypeInfo = context.SemanticModel.GetTypeInfo(forEachStatement.Expression);
+            if (expressionTypeInfo.Type == null
+                || expressionTypeInfo.Type.TypeKind == TypeKind.Error)
+            {
+                // Ignore untyped/error.
+                return;
+            }
+            if (expressionTypeInfo.Type.TypeKind == TypeKind.Array)
+            {
+                var arrayTypeSymbol = (IArrayTypeSymbol)expressionTypeInfo.Type;
+                considerConversion(
+                    arrayTypeSymbol.ElementType,
+                    loopVariableTypeInfo.Type);
+                return;
+            }
+
+            // Now have to analyze type of assignment. Determine if is implicitly an explicit cast.
+            var forEachStatementInfo = context.SemanticModel.GetForEachStatementInfo(forEachStatement);
+            // Ensure it is a valid foreach. We may get called with an invalid foreach, in which case
+            // one of the things will be null.
+            if (forEachStatementInfo.ElementType == null)
+            {
+                return;
+            }
+            considerConversion(
+                forEachStatementInfo.ElementType,
+                loopVariableTypeInfo.Type);
+            return;
+
+            void considerConversion(
+                ITypeSymbol from,
+                ITypeSymbol to)
+            {
+                // Ignore forEachStatementInfo.CurrentConversion. It will claim that
+                // conversion from object to int is “IsIdentity”. I.e., the compiler is
+                // tricking itself out to think that such a conversion is permissible.
+                // We need to actually ask the compiler directly if it thinks the conversion
+                // exists instead.
+                //
+                // Also, for arrays, the conversion doesn’t take into account the
+                // array type because the compiler tells itself that the array is IEnumerable
+                // instead of IEnumerable<T>. So we need to classify that conversion based
+                // on the compile-time known array type.
+                var conversion = context.Compilation.ClassifyConversion(from, to);
+                
+                // Explicit conversion means that you would have to request it.
+                // In most cases that means a runtime cast, especially likely
+                // for reference and unboxing conversions. However, it is possible
+                // that an explicit user-defined conversion exists. So ensure
+                // is not user-defined.
+                if (conversion.IsExplicit
+                    && (conversion.IsReference || conversion.IsUnboxing)
+                    && !conversion.IsUserDefined
+                    // Converting to object is always allowed.
+                    && to.SpecialType != SpecialType.System_Object)
+                {
+                    context.ReportDiagnostic(
+                        Diagnostic.Create(
+                            Rule,
+                            forEachStatement.Type.GetLocation(),
+                            from.ToDisplayString(),
+                            to.ToDisplayString()));
+                }
             }
         }
     }

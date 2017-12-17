@@ -1,13 +1,19 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.27130.2003
+VisualStudioVersion = 15.0.27130.2010
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OhNoPub.ImplicitCastAnalyzer", "OhNoPub.ImplicitCastAnalyzer\OhNoPub.ImplicitCastAnalyzer\OhNoPub.ImplicitCastAnalyzer.csproj", "{89A64D4F-397E-4966-9D36-9B60360EFDBB}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OhNoPub.ImplicitCastAnalyzer", "OhNoPub.ImplicitCastAnalyzer\OhNoPub.ImplicitCastAnalyzer\OhNoPub.ImplicitCastAnalyzer.csproj", "{89A64D4F-397E-4966-9D36-9B60360EFDBB}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OhNoPub.ImplicitCastAnalyzer.Test", "OhNoPub.ImplicitCastAnalyzer\OhNoPub.ImplicitCastAnalyzer.Test\OhNoPub.ImplicitCastAnalyzer.Test.csproj", "{9EF221FF-2E5A-4B45-9D0B-A52AEDCA6BE7}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "OhNoPub.ImplicitCastAnalyzer.Test", "OhNoPub.ImplicitCastAnalyzer\OhNoPub.ImplicitCastAnalyzer.Test\OhNoPub.ImplicitCastAnalyzer.Test.csproj", "{9EF221FF-2E5A-4B45-9D0B-A52AEDCA6BE7}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "OhNoPub.ImplicitCastAnalyzer.Vsix", "OhNoPub.ImplicitCastAnalyzer\OhNoPub.ImplicitCastAnalyzer.Vsix\OhNoPub.ImplicitCastAnalyzer.Vsix.csproj", "{3BE7AF1E-7989-470F-A56D-767C7F5B5279}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{350CA83F-10F0-464C-AD47-5DC8DBF871E0}"
+	ProjectSection(SolutionItems) = preProject
+		LICENSE.md = LICENSE.md
+		README.md = README.md
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
