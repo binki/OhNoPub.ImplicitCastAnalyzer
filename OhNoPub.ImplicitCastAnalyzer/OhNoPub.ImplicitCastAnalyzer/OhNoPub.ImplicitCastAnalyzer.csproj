@@ -10,16 +10,17 @@
     <PackageId>OhNoPub.ImplicitCastAnalyzer</PackageId>
     <PackageVersion>1.0.0.0</PackageVersion>
     <Authors>ohnob</Authors>
-    <PackageLicenseUrl>http://LICENSE_URL_HERE_OR_DELETE_THIS_LINE</PackageLicenseUrl>
-    <PackageProjectUrl>http://PROJECT_URL_HERE_OR_DELETE_THIS_LINE</PackageProjectUrl>
-    <PackageIconUrl>http://ICON_URL_HERE_OR_DELETE_THIS_LINE</PackageIconUrl>
-    <RepositoryUrl>http://REPOSITORY_URL_HERE_OR_DELETE_THIS_LINE</RepositoryUrl>
+    <PackageLicenseUrl>https://github.com/binki/$id$/tree/$id$-$version$/LICENSE.md</PackageLicenseUrl>
+    <PackageProjectUrl>https://github.com/binki/$id$</PackageProjectUrl>
+    <PackageIconUrl></PackageIconUrl>
+    <RepositoryUrl>https://github.com/binki/$id$</RepositoryUrl>
     <PackageRequireLicenseAcceptance>false</PackageRequireLicenseAcceptance>
     <Description>OhNoPub.ImplicitCastAnalyzer</Description>
     <PackageReleaseNotes>Summary of changes made in this release of the package.</PackageReleaseNotes>
     <Copyright>Copyright</Copyright>
     <PackageTags>OhNoPub.ImplicitCastAnalyzer, analyzers</PackageTags>
     <NoPackageAnalysis>true</NoPackageAnalysis>
+    <RepositoryType>git</RepositoryType>
   </PropertyGroup>
    
   <ItemGroup>
