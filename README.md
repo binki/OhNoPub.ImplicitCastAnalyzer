@@ -66,8 +66,6 @@ See [dotnet/roslyn#14382](https://github.com/dotnet/roslyn/issues/14382).
 
 # TODO:
 
-* Publish NuGet package. I should be able to figure this out but it will take
-  time. My goal is to make it easy to publish and easy to install.
 * LINQ query support:
   ```csharp
   var q =
