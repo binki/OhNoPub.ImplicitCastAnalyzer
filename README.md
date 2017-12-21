@@ -36,11 +36,11 @@ foreach (Control control in Controls)
 }
 ```
 
-This works all fine and well when the programmer is obsolutely certain about
+This works all fine and well when the programmer is absolutely certain about
 the runtime types of values in the iterated collection and it is known that
 the API will never change. For example, this is considered acceptable by many
 for interacting with legacy untyped winforms APIs. But, this same feature has two issues.
-First, it results in an runtime cast with its performance pentalty which, with
+First, it results in a runtime cast with its performance penalty which, with
 some planning/design/API improvement, may be unnecessary. Second and, in my opinion,
 most importantly, this defers detection of some types of programming errors until
 runtime.
@@ -56,7 +56,7 @@ foreach (int i in numbers)
 }
 ```
 
-This analyzer introduces a copmile-time warning that detects when a runtime cast would
+This analyzer introduces a compile-time warning that detects when a runtime cast would
 occur. It also provides a codefix to conveniently convert the explicitly named type to
 `var` to avoid the implicit runtime cast. This enables one to catch such issues at
 compile time prior to even running tests. Additionally, it helps identify code
@@ -76,6 +76,6 @@ See [dotnet/roslyn#14382](https://github.com/dotnet/roslyn/issues/14382).
   ```
 * VB.Net support. VB has basically the same constructs: [`For Each…Next`](https://docs.microsoft.com/en-us/dotnet/visual-basic/language-reference/statements/for-each-next-statement). Right now,
   this project only minimally supports C#. I do not know if the
-  actual analyzer can be genericized to support both C# and VB.Net
+  actual analyzer can be generalized to support both C# and VB.Net
   at the same time, but it has basically the same constructs and,
   I assume, the same issues.
