@@ -7,15 +7,20 @@ enumerables. Those are the untyped
 [`IEnumerable`](https://docs.microsoft.com/en-us/dotnet/api/system.collections.ienumerable)
 and typed
 [`IEnumerable<T>`](https://docs.microsoft.com/en-us/dotnet/api/system.collections.generic.ienumerable-1).
-Vanilla C# has two constructs which support consuming both typed and untyped
-enumerables:
+Vanilla C# and VB.NET has two constructs which support consuming both typed and untyped
+enumerables.
+For C#, these are
 [`foreach`](https://docs.microsoft.com/en-us/dotnet/csharp/language-reference/keywords/foreach-in)
 and
 [LINQ query syntax](https://docs.microsoft.com/en-us/dotnet/csharp/programming-guide/concepts/linq/introduction-to-linq-queries).
+For VB.NET, these are
+[`For Each…Next`](https://docs.microsoft.com/en-us/dotnet/visual-basic/language-reference/statements/for-each-next-statement)
+and
+[LINQ query syntax](https://docs.microsoft.com/en-us/dotnet/visual-basic/programming-guide/language-features/linq/introduction-to-linq#StructureOfALINQQuery).
 
 Modern libraries and environments use typed enumerables. This
 means that the compiler can figure out an appropriate type when you use
-the `var` keyword. For example:
+type inference (the `var` keyword in C#, omitted `As` clause in VB.NET). For example:
 
 ```csharp
 var numbers = new[] { 1, 2, 3, };
@@ -23,6 +28,12 @@ foreach (var i in numbers)
 {
     int j = i;
 }
+```
+
+```vbnet
+For Each i In { 1, 2, 3 }
+    Dim j As Integer = i
+Next
 ```
 
 However, to support consuming untyped enumerables—the only option in .net-1.x—, these
@@ -34,6 +45,12 @@ foreach (Control control in Controls)
 {
     Control myControl = control;
 }
+```
+
+```vbnet
+For Each control As Control in Controls
+    Dim myControl As Control = control
+Next
 ```
 
 This works all fine and well when the programmer is absolutely certain about
@@ -56,9 +73,18 @@ foreach (int i in numbers)
 }
 ```
 
+```vbnet
+' Because VB.NET does runtime type coersion, this would run without exception
+' if the strings were, e.g., "0.1", "4". However, that is unexpected behavior
+' and effectively sidesteps the protections provided by Option Strict On.
+For Each i As Integer in { "uhm", "yeah!" }
+    Console.WriteLine($"i={i}, 2*i={2*i}")
+Next
+```
+
 This analyzer introduces a compile-time warning that detects when a runtime cast would
 occur. It also provides a codefix to conveniently convert the explicitly named type to
-`var` to avoid the implicit runtime cast. This enables one to catch such issues at
+use inference to avoid the implicit runtime cast. This enables one to catch such issues at
 compile time prior to even running tests. Additionally, it helps identify code
 which could be benefited by moving to generic collections.
 
@@ -72,7 +98,13 @@ See [dotnet/roslyn#14382](https://github.com/dotnet/roslyn/issues/14382).
       from int i from new object[]{ "a", "b", "c", }
 	  select 2*i;
   ```
-* VB.Net support. VB has basically the same constructs: [`For Each…Next`](https://docs.microsoft.com/en-us/dotnet/visual-basic/language-reference/statements/for-each-next-statement). Right now,
+
+  ```vbnet
+  Dim q =
+      From i As Integer In { "a", "b", "c" }
+	  Select 2*i
+  ```
+* VB.Net support. VB has basically the same constructs: . Right now,
   this project only minimally supports C#. I do not know if the
   actual analyzer can be generalized to support both C# and VB.Net
   at the same time, but it has basically the same constructs and,

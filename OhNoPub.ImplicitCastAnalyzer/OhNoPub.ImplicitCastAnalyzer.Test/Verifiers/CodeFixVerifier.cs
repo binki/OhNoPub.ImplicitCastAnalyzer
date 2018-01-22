@@ -58,6 +58,48 @@ namespace TestHelper
             VerifyFix(LanguageNames.VisualBasic, GetBasicDiagnosticAnalyzer(), GetBasicCodeFixProvider(), oldSource, newSource, codeFixIndex, allowNewCompilerDiagnostics);
         }
 
+        protected void VerifyBasicNoFixes(string source)
+        {
+            VerifyNoFixes(LanguageNames.VisualBasic, GetBasicDiagnosticAnalyzer(), GetBasicCodeFixProvider(), source);
+        }
+
+        void VerifyNoFixes(string language, DiagnosticAnalyzer analyzer, CodeFixProvider codeFixProvider, string source)
+        {
+            var document = CreateDocument(source, language);
+            var analyzerDiagnostics = GetSortedDiagnosticsFromDocuments(analyzer, new[] { document, });
+
+            foreach (var analyzerDiagnostic in analyzerDiagnostics)
+            {
+                var context = new CodeFixContext(document, analyzerDiagnostic, (a, d) =>
+                {
+                    Assert.Fail($"Expected no code actions, got: {a}");
+                }, default(CancellationToken));
+                codeFixProvider.RegisterCodeFixesAsync(context).Wait();
+            }
+        }
+
+        /// <summary>
+        ///   Verify that the code would successfully compile since IÅfm bad at writing code.
+        /// </summary>
+        /// <param name="source"></param>
+        protected void VerifyBasicNoCompileErrors(string source)
+        {
+            VerifyNoCompileErrors(LanguageNames.VisualBasic, source);
+        }
+
+        void VerifyNoCompileErrors(string language, string source)
+        {
+            var document = CreateDocument(source, language);
+            var compilerDiagnostics = GetCompilerDiagnostics(document);
+            foreach(var compilerDiagnostic in compilerDiagnostics)
+            {
+                if (compilerDiagnostic.DefaultSeverity >= DiagnosticSeverity.Error)
+                {
+                    Assert.Fail($"Unexpected compilation error: {compilerDiagnostic}");
+                }
+            }
+        }
+
         /// <summary>
         /// General verifier for codefixes.
         /// Creates a Document from the source string, then gets diagnostics on it and applies the relevant codefixes.

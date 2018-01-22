@@ -11,12 +11,12 @@ using System.Threading.Tasks;
 
 namespace OhNoPub.ImplicitCastAnalyzer
 {
-    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(OhNoPubImplicitCastForeachCodeFixProvider)), Shared]
-    public class OhNoPubImplicitCastForeachCodeFixProvider : CodeFixProvider
+    [ExportCodeFixProvider(LanguageNames.CSharp, Name = nameof(OhNoPubImplicitCastForeachCSharpCodeFixProvider)), Shared]
+    public sealed class OhNoPubImplicitCastForeachCSharpCodeFixProvider : CodeFixProvider
     {
         private const string title = "Avoid implicit cast with 'var'";
 
-        public sealed override ImmutableArray<string> FixableDiagnosticIds => ImmutableArray.Create(OhNoPubImplicitCastForeachAnalyzer.DiagnosticId);
+        public sealed override ImmutableArray<string> FixableDiagnosticIds { get; } = ImmutableArray.Create(OhNoPubImplicitCastForeachAnalyzer.DiagnosticId);
 
         public sealed override FixAllProvider GetFixAllProvider()
         {
@@ -44,7 +44,7 @@ namespace OhNoPub.ImplicitCastAnalyzer
                 diagnostic);
         }
 
-        private async Task<Document> MakeUseVar(
+        async Task<Document> MakeUseVar(
             Document document,
             TypeSyntax type,
             CancellationToken cancellationToken)
@@ -55,7 +55,7 @@ namespace OhNoPub.ImplicitCastAnalyzer
                     "var",
                     type.GetTrailingTrivia()));
 
-            var oldRoot = await document.GetSyntaxRootAsync(cancellationToken);
+            var oldRoot = await document.GetSyntaxRootAsync(cancellationToken).ConfigureAwait(false);
             var newRoot = oldRoot.ReplaceNode(type, newType);
 
             return document.WithSyntaxRoot(newRoot);

@@ -7,11 +7,8 @@ using TestHelper;
 namespace OhNoPub.ImplicitCastAnalyzer.Test
 {
     [TestClass]
-    public class UnitTest : CodeFixVerifier
+    public class OhNoPubImplicitCastForeachCSharpUnitTests : OhNoPubImplicitCastUnitTestsBase
     {
-        private const string DiagnosticMessage = "Implicit run time cast from '{0}' to '{1}'";
-        private const string OhNoPubImplicitCastForeachId = "OhNoPubImplicitCastForeach";
-
         // No diagnostics expected to show up
         [TestMethod]
         public void TestEmptyCode()
@@ -22,47 +19,16 @@ namespace OhNoPub.ImplicitCastAnalyzer.Test
         }
 
         // No diagnostics expected to show up
-        [TestMethod]
-        public void TestVarNoCast_Array()
+        [DataRow("string[]")]
+        [DataRow("System.Collections.IEnumerable")]
+        [DataRow("System.Collections.Generic.IEnumerable<string>")]
+        [DataTestMethod]
+        public void TestVarNoCast(string type)
         {
             var test = @"
 class MyClass {
-    public MyClass() {
-        foreach (var x in new[] { ""a"", ""b"", }) {
-        }
-    }
-}";
-
-            VerifyCSharpDiagnostic(test);
-        }
-
-        // No diagnostics expected to show up
-        [TestMethod]
-        public void TestVarNoCast_Enumerable()
-        {
-            var test = @"
-using System.Collections;
-
-class MyClass {
-    public MyClass(IEnumerable e) {
-        foreach (var x in e) {
-        }
-    }
-}";
-
-            VerifyCSharpDiagnostic(test);
-        }
-
-        // No diagnostics expected to show up
-        [TestMethod]
-        public void TestVarNoCast_GenericEnumerable()
-        {
-            var test = @"
-using System.Collections.Generic;
-
-class MyClass {
-    public MyClass(IEnumerable<string> e) {
-        foreach (var x in e) {
+    public MyClass(" + type + @" v) {
+        foreach (var x in v) {
         }
     }
 }";
@@ -290,12 +256,12 @@ class MyClass {
 
         protected override CodeFixProvider GetCSharpCodeFixProvider()
         {
-            return new OhNoPubImplicitCastForeachCodeFixProvider();
+            return new OhNoPubImplicitCastForeachCSharpCodeFixProvider();
         }
 
         protected override DiagnosticAnalyzer GetCSharpDiagnosticAnalyzer()
         {
-            return new OhNoPubImplicitCastForeachAnalyzer();
+            return new OhNoPubImplicitCastForeachCSharpAnalyzer();
         }
     }
 }
